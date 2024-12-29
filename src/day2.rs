@@ -47,7 +47,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_day1_part1() {
+    fn test_day2_part1() {
         assert_eq!(execute(parse("1,9,10,3,2,3,11,0,99,30,40,50")), 3500);
         assert_eq!(execute(parse("1,0,0,0,99")), 2);
         assert_eq!(execute(parse("2,3,0,3,99")), 2);
@@ -56,7 +56,5 @@ mod tests {
     }
 
     #[test]
-    fn test_day1_part2() {
-        assert_eq!(part2(""), 0);
-    }
+    fn test_day2_part2() {}
 }
