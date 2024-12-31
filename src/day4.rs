@@ -1,3 +1,5 @@
+use std::cmp::Ordering;
+
 fn solve(low: i64, high: i64, strict_pair: bool) -> i64 {
     let mut result = 0;
     for mut i in low..high + 1 {
@@ -7,19 +9,23 @@ fn solve(low: i64, high: i64, strict_pair: bool) -> i64 {
         while i > 0 {
             let cur = i % 10;
             let next = (i / 10) % 10;
-            if cur == next {
-                pair_counter += 1;
-                if !strict_pair {
-                    pair = true;
+            match cur.cmp(&next) {
+                Ordering::Equal => {
+                    pair_counter += 1;
+                    if !strict_pair {
+                        pair = true;
+                    }
                 }
-            } else if cur < next {
-                ok = false;
-                break;
-            } else {
-                if pair_counter == 2 {
-                    pair = true;
+                Ordering::Less => {
+                    ok = false;
+                    break;
                 }
-                pair_counter = 1;
+                Ordering::Greater => {
+                    if pair_counter == 2 {
+                        pair = true;
+                    }
+                    pair_counter = 1;
+                }
             }
             i /= 10;
         }

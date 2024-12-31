@@ -29,9 +29,9 @@ impl Line {
 
 fn parse_step(bytes: &[u8]) -> (u8, i64) {
     let mut steps = 0;
-    for i in 1..bytes.len() {
+    for byte in &bytes[1..] {
         steps *= 10;
-        steps += (bytes[i] - b'0') as i64;
+        steps += (byte - b'0') as i64;
     }
     (bytes[0], steps)
 }
@@ -54,14 +54,14 @@ fn parse_line(line: &str) -> Vec<Vec<Line>> {
                 fixed: pos.1,
                 start: pos.0,
                 end: new_pos.0,
-                distance: distance,
+                distance,
             }
         } else {
             Line {
                 fixed: pos.0,
                 start: pos.1,
                 end: new_pos.1,
-                distance: distance,
+                distance,
             }
         };
         distance += (pos.0 - new_pos.0).abs() + (pos.1 - new_pos.1).abs();
