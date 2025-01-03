@@ -52,8 +52,6 @@ pub fn part2(input: &str) -> i64 {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-
     #[test]
     fn test_day4_part1() {}
 
