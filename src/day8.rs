@@ -15,7 +15,7 @@ fn decode(input: &str, width: usize, height: usize) -> String {
             image
         })
         .iter()
-        .map(|row| std::str::from_utf8(&row).unwrap())
+        .map(|row| std::str::from_utf8(row).unwrap())
         .collect::<Vec<_>>()
         .join("\n")
 }
