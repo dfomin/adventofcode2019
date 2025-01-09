@@ -196,7 +196,6 @@ pub fn part1(input: &str) -> i64 {
 pub fn part2(input: &str) -> String {
     let (map, (min_x, min_y, max_x, max_y)) = solve(input, 1);
     let mut chars = vec![vec![b' '; (max_x - min_x + 1) as usize]; (max_y - min_y + 1) as usize];
-    println!("{} {} {} {}", min_x, min_y, max_x, max_y);
     for (key, value) in map {
         if value == 1 {
             chars[(max_y - key.1) as usize][(key.0 - min_x) as usize] = b'#';
@@ -210,8 +209,6 @@ pub fn part2(input: &str) -> String {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-
     #[test]
     fn test_day11_part1() {}
 
