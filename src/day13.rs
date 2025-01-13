@@ -220,8 +220,8 @@ pub fn part2(input: &str) -> i64 {
 #[cfg(test)]
 mod tests {
     #[test]
-    fn test_day11_part1() {}
+    fn test_day13_part1() {}
 
     #[test]
-    fn test_day11_part2() {}
+    fn test_day13_part2() {}
 }
