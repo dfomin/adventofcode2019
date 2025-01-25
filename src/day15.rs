@@ -1,12 +1,18 @@
-use rand::Rng;
 use std::{
     collections::{HashMap, HashSet, VecDeque},
     fmt::Display,
 };
 
+#[derive(Debug, Clone, Copy)]
+enum CellType {
+    Empty,
+    Wall,
+    Oxygen,
+}
+
 #[derive(Default)]
 struct Field {
-    points: HashMap<(i64, i64), bool>,
+    points: HashMap<(i64, i64), CellType>,
     min_x: i64,
     min_y: i64,
     max_x: i64,
@@ -14,8 +20,8 @@ struct Field {
 }
 
 impl Field {
-    fn add_cell(&mut self, x: i64, y: i64, is_wall: bool) {
-        self.points.insert((x, y), is_wall);
+    fn add_cell(&mut self, x: i64, y: i64, cell_type: CellType) {
+        self.points.insert((x, y), cell_type);
         self.min_x = self.min_x.min(x);
         self.min_y = self.min_y.min(y);
         self.max_x = self.max_x.max(x);
@@ -27,11 +33,11 @@ impl Display for Field {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         for i in self.min_y..self.max_y + 1 {
             for j in self.min_x..self.max_x + 1 {
-                if let Some(&is_wall) = self.points.get(&(j, i)) {
-                    if is_wall {
-                        write!(f, "{}", '#')?;
-                    } else {
-                        write!(f, "{}", '.')?;
+                if let Some(&cell_type) = self.points.get(&(j, i)) {
+                    match cell_type {
+                        CellType::Empty => write!(f, "{}", '.')?,
+                        CellType::Wall => write!(f, "{}", '#')?,
+                        CellType::Oxygen => write!(f, "{}", '!')?,
                     }
                 } else {
                     write!(f, "{}", ' ')?;
@@ -217,10 +223,10 @@ pub fn part1(input: &str) -> i64 {
             visited.insert(next_pos);
             match *clone_int_code.output.last().unwrap() {
                 0 => {
-                    field.add_cell(next_pos.0, next_pos.1, true);
+                    field.add_cell(next_pos.0, next_pos.1, CellType::Wall);
                 }
                 1 => {
-                    field.add_cell(next_pos.0, next_pos.1, false);
+                    field.add_cell(next_pos.0, next_pos.1, CellType::Empty);
                     pool.push_back((steps + 1, next_pos, clone_int_code.clone()));
                 }
                 2 => {
@@ -234,7 +240,64 @@ pub fn part1(input: &str) -> i64 {
 }
 
 pub fn part2(input: &str) -> i64 {
-    0
+    let values = parse(input);
+    let mut field = Field::default();
+    let dirs = [(0, 1), (0, -1), (-1, 0), (1, 0)];
+    let mut visited = HashSet::new();
+    visited.insert((0, 0));
+    let mut pool = VecDeque::new();
+    pool.push_back((0, (0, 0), IntCode::new(values, VecDeque::new())));
+    let mut oxygen = HashSet::new();
+    while let Some((steps, pos, int_code)) = pool.pop_front() {
+        for direction in 1..5 {
+            let next_pos = (
+                pos.0 + dirs[direction as usize - 1].0,
+                pos.1 + dirs[direction as usize - 1].1,
+            );
+            if visited.contains(&next_pos) {
+                continue;
+            }
+            let mut clone_int_code = int_code.clone();
+            clone_int_code.add_input(direction);
+            clone_int_code.execute();
+            visited.insert(next_pos);
+            match *clone_int_code.output.last().unwrap() {
+                0 => {
+                    field.add_cell(next_pos.0, next_pos.1, CellType::Wall);
+                }
+                1 => {
+                    field.add_cell(next_pos.0, next_pos.1, CellType::Empty);
+                    pool.push_back((steps + 1, next_pos, clone_int_code.clone()));
+                }
+                2 => {
+                    field.add_cell(next_pos.0, next_pos.1, CellType::Oxygen);
+                    oxygen.insert(next_pos);
+                }
+                _ => panic!("Unexpected"),
+            }
+        }
+    }
+    let mut steps = 0;
+    let mut frontier = Vec::from_iter(oxygen.iter().cloned());
+    while !frontier.is_empty() {
+        let mut next_frontier = vec![];
+        for pos in frontier {
+            for dir in 0..4 {
+                let next_pos = (pos.0 + dirs[dir].0, pos.1 + dirs[dir].1);
+                if !matches!(field.points.get(&next_pos), Some(CellType::Empty)) {
+                    continue;
+                }
+                if oxygen.contains(&next_pos) {
+                    continue;
+                }
+                next_frontier.push(next_pos);
+                oxygen.insert(next_pos);
+            }
+        }
+        steps += 1;
+        frontier = next_frontier;
+    }
+    steps - 1
 }
 
 #[cfg(test)]
