@@ -193,4 +193,30 @@ fn main() {
         day,
         adventofcode2019::day15::part2(&input)
     );
+
+    day = 16;
+    let input = adventofcode2019::read_input(day);
+    println!(
+        "Day {} part 1: {}",
+        day,
+        adventofcode2019::day16::part1(&input)
+    );
+    println!(
+        "Day {} part 2: {}",
+        day,
+        adventofcode2019::day16::part2(&input)
+    );
+
+    day = 17;
+    let input = adventofcode2019::read_input(day);
+    println!(
+        "Day {} part 1: {}",
+        day,
+        adventofcode2019::day17::part1(&input)
+    );
+    println!(
+        "Day {} part 2: {}",
+        day,
+        adventofcode2019::day17::part2(&input)
+    );
 }
